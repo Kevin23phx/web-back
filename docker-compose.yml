@@ -1,0 +1,49 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: lebian-mongodb
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - lebian-network
+
+  backend:
+    build:
+      context: ./Backend-Lebian
+      dockerfile: Dockerfile
+    container_name: lebian-backend
+    ports:
+      - "3001:3000"
+    environment:
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/eco-signal
+      - JWT_SECRET=your-secret-key-change-this
+      - JWT_EXPIRES_IN=24h
+      - FRONTEND_URL=http://localhost:5173
+    depends_on:
+      - mongodb
+    networks:
+      - lebian-network
+
+  frontend:
+    build:
+      context: ./Frontend-Lebian
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:3001/api
+    container_name: lebian-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - lebian-network
+
+networks:
+  lebian-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
