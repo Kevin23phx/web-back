@@ -50,4 +50,14 @@ export class UsersService {
     user.password = hashedPassword;
     await user.save();
   }
+
+  async update(id: string, updateData: Partial<User>): Promise<UserDocument> {
+    const user = await this.userModel.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true },
+    ).exec();
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
 }

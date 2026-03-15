@@ -56,8 +56,14 @@ export class Report {
   @Prop({ default: 0 })
   likes: number;
 
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'User' }], default: [] })
+  likedBy: string[];
+
   @Prop({ default: 0 })
   views: number;
+
+  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'User' }], default: [] })
+  viewedBy: string[];
 }
 
 export const ReportSchema = SchemaFactory.createForClass(Report);

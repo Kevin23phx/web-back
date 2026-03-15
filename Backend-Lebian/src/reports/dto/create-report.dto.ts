@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsEnum, IsOptional, IsNumber, IsArray } from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsOptional, IsNumber, IsIn, IsArray } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
@@ -14,7 +14,7 @@ export class CreateReportDto {
   description: string;
 
   @ApiProperty({ example: 'plastic', enum: ['plastic', 'organic', 'metal', 'glass', 'other'] })
-  @IsEnum(['plastic', 'organic', 'metal', 'glass', 'other'])
+  @IsIn(['plastic', 'organic', 'metal', 'glass', 'other'])
   category: string;
 
   @ApiPropertyOptional()
@@ -34,10 +34,15 @@ export class CreateReportDto {
   @IsNumber()
   longitude?: number;
 
-  @ApiPropertyOptional({ example: 'Central Park, Paris' })
-  @IsOptional()
+  @ApiProperty({ example: 'Central Park, Paris' })
   @IsString()
-  address?: string;
+  @IsNotEmpty()
+  address: string;
+
+  @ApiPropertyOptional({ example: 'medium', enum: ['none', 'low', 'medium', 'high'] })
+  @IsOptional()
+  @IsIn(['none', 'low', 'medium', 'high'])
+  priority?: string;
 
   @ApiPropertyOptional({ type: [String] })
   @IsOptional()

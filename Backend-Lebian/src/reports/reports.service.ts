@@ -98,15 +98,43 @@ export class ReportsService {
       .exec();
   }
 
-  async like(id: string): Promise<ReportDocument | null> {
+  async like(id: string, userId: string): Promise<ReportDocument | null> {
+    const report = await this.reportModel.findById(id).exec();
+    if (!report) throw new NotFoundException('Report not found');
+
+    if (report.likedBy.includes(userId)) {
+      return report; // Already liked
+    }
+
     return this.reportModel
-      .findByIdAndUpdate(id, { $inc: { likes: 1 } }, { new: true })
+      .findByIdAndUpdate(
+        id,
+        { 
+          $inc: { likes: 1 },
+          $addToSet: { likedBy: userId } 
+        },
+        { new: true },
+      )
       .exec();
   }
 
-  async incrementViews(id: string): Promise<ReportDocument | null> {
+  async incrementViews(id: string, userId: string): Promise<ReportDocument | null> {
+    const report = await this.reportModel.findById(id).exec();
+    if (!report) throw new NotFoundException('Report not found');
+
+    if (report.viewedBy.includes(userId)) {
+      return report; // Already viewed
+    }
+
     return this.reportModel
-      .findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true })
+      .findByIdAndUpdate(
+        id,
+        { 
+          $inc: { views: 1 },
+          $addToSet: { viewedBy: userId } 
+        },
+        { new: true },
+      )
       .exec();
   }
 

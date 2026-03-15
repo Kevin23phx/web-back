@@ -1,4 +1,4 @@
-import { Controller, Put, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Put, Body, UseGuards, Request, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
@@ -19,5 +19,11 @@ export class UsersController {
       body.newPassword,
     );
     return { message: 'Password updated successfully' };
+  }
+
+  @Patch('profile')
+  @ApiOperation({ summary: 'Update user profile' })
+  async updateProfile(@Request() req, @Body() body: any) {
+    return this.usersService.update(req.user.userId, body);
   }
 }

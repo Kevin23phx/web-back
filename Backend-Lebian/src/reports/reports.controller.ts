@@ -82,15 +82,19 @@ export class ReportsController {
   }
 
   @Post(':id/like')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Like a report' })
-  async like(@Param('id') id: string) {
-    return this.reportsService.like(id);
+  async like(@Param('id') id: string, @Req() req: any) {
+    return this.reportsService.like(id, req.user.userId);
   }
 
   @Patch(':id/views')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Increment report views' })
-  async incrementViews(@Param('id') id: string) {
-    return this.reportsService.incrementViews(id);
+  async incrementViews(@Param('id') id: string, @Req() req: any) {
+    return this.reportsService.incrementViews(id, req.user.userId);
   }
 
   @Delete(':id')

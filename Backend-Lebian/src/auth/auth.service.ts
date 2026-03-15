@@ -42,4 +42,13 @@ export class AuthService {
     }
     throw new UnauthorizedException('Invalid credentials');
   }
+
+  async getProfile(userId: string) {
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    const { password, ...result } = user.toObject();
+    return { user: result };
+  }
 }
