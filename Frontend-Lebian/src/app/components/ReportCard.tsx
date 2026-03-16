@@ -101,7 +101,7 @@ export const ReportCard = ({ report }: ReportCardProps) => {
               {getCategoryLabel(report.category)}
             </Badge>
             <Badge variant="outline" className={`text-xs ${getPriorityColor(report.priority)}`}>
-              Priorité {report.priority === 'low' ? 'faible' : report.priority === 'medium' ? 'moyenne' : 'haute'}
+              Priorité {report.priority === 'none' ? 'aucune' : report.priority === 'low' ? 'faible' : report.priority === 'medium' ? 'moyenne' : 'haute'}
             </Badge>
           </div>
 
