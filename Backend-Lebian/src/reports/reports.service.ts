@@ -26,6 +26,8 @@ export class ReportsService {
       ...rest,
       userId,
       images: images || [],
+      status: 'pending', // Toujours en attente à la création
+      priority: 'none',  // Pas de priorité à la création
       ...(locationInfo && { location: locationInfo }),
     });
 
