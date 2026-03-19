@@ -101,15 +101,6 @@ export const Login = () => {
                 </Link>
               </p>
             </div>
-
-            {/* Demo credentials */}
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-xs font-medium text-blue-900 mb-2">Comptes de démonstration :</p>
-              <div className="space-y-1 text-xs text-blue-800">
-                <p><strong>Utilisateur :</strong> user@test.com / password</p>
-                <p><strong>Admin :</strong> admin@test.com / password</p>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>

@@ -16,12 +16,17 @@ services:
     container_name: lebian-backend
     ports:
       - "3001:3000"
+    dns:
+      - 8.8.8.8
     environment:
       - PORT=3000
       - MONGODB_URI=mongodb://mongodb:27017/eco-signal
       - JWT_SECRET=your-secret-key-change-this
       - JWT_EXPIRES_IN=24h
       - FRONTEND_URL=*
+      - CLOUDINARY_CLOUD_NAME=do6hngocn
+      - CLOUDINARY_API_KEY=788892387645693
+      - CLOUDINARY_API_SECRET=PzySyY9IXgautUWG49j3d2stffY
     depends_on:
       - mongodb
     networks:
