@@ -9,7 +9,10 @@ import {
   UseGuards,
   Req,
   Delete,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { ReportsService } from './reports.service';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
@@ -31,10 +34,15 @@ export class ReportsController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiConsumes('application/json')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FilesInterceptor('images'))
   @ApiOperation({ summary: 'Create a new report' })
-  async create(@Req() req: any, @Body() createReportDto: CreateReportDto) {
-    return this.reportsService.create(req.user.userId, createReportDto);
+  async create(
+    @Req() req: any, 
+    @Body() createReportDto: CreateReportDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    return this.reportsService.create(req.user.userId, createReportDto, files);
   }
 
   @Get()

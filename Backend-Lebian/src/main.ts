@@ -19,8 +19,9 @@ async function bootstrap() {
   });
 
   // Increase payload size limit
-  app.use(json({ limit: '50mb' }));
-  app.use(urlencoded({ extended: true, limit: '50mb' }));
+  // Increase payload size limit for Base64 images
+  app.use(json({ limit: '70mb' }));
+  app.use(urlencoded({ extended: true, limit: '70mb' }));
 
   // Global validation pipe
   app.useGlobalPipes(

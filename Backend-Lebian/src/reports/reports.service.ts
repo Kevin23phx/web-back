@@ -4,18 +4,52 @@ import { Model } from 'mongoose';
 import { Report, ReportDocument } from './schemas/report.schema';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
+import { CloudinaryService } from '../common/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ReportsService {
   constructor(
     @InjectModel(Report.name) private reportModel: Model<ReportDocument>,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   async create(
     userId: string,
     createReportDto: CreateReportDto,
+    files?: Express.Multer.File[],
   ): Promise<ReportDocument> {
-    const { latitude, longitude, images, ...rest } = createReportDto;
+    const { latitude, longitude, images: existingImages, ...rest } = createReportDto;
+
+    const imageUrls: string[] = [];
+
+    // Handle existing images (could be Base64 from mobile app)
+    if (existingImages && existingImages.length > 0) {
+      for (const img of existingImages) {
+        if (img.startsWith('data:image')) {
+          try {
+            const upload = await this.cloudinaryService.uploadBase64(img);
+            if (upload.url) {
+              imageUrls.push(upload.url);
+            }
+          } catch (error) {
+            console.error('Base64 upload failed:', error);
+            // Optionally keep the Base64 if upload fails, but better to skip to avoid database bloat
+          }
+        } else {
+          imageUrls.push(img);
+        }
+      }
+    }
+
+    // Handle uploaded files (Multipart)
+    if (files && files.length > 0) {
+      for (const file of files) {
+        const upload = await this.cloudinaryService.uploadImage(file);
+        if (upload.url) {
+          imageUrls.push(upload.url);
+        }
+      }
+    }
 
     const locationInfo =
       latitude !== undefined && longitude !== undefined
@@ -25,9 +59,9 @@ export class ReportsService {
     const createdReport = new this.reportModel({
       ...rest,
       userId,
-      images: images || [],
-      status: 'pending', // Toujours en attente à la création
-      priority: 'none',  // Pas de priorité à la création
+      images: imageUrls,
+      status: 'pending',
+      priority: 'none',
       ...(locationInfo && { location: locationInfo }),
     });
 

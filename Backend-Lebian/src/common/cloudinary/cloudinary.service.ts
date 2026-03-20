@@ -16,4 +16,23 @@ export class CloudinaryService {
       Readable.from(file.buffer).pipe(upload);
     });
   }
+
+  async uploadBase64(
+    base64String: string,
+  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    return new Promise((resolve, reject) => {
+      v2.uploader.upload(
+        base64String,
+        {
+          folder: 'ecosignal/reports',
+          resource_type: 'auto',
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          if (!result) return reject(new Error('Cloudinary upload failed: No result'));
+          resolve(result);
+        },
+      );
+    });
+  }
 }
