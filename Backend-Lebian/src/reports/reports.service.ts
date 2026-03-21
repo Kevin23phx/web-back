@@ -32,8 +32,10 @@ export class ReportsService {
               imageUrls.push(upload.url);
             }
           } catch (error) {
-            console.error('Base64 upload failed:', error);
-            // Optionally keep the Base64 if upload fails, but better to skip to avoid database bloat
+            console.error('Cloudinary Base64 upload failed:', error.message || error);
+            if (error.http_code) {
+              console.error('Cloudinary Error Code:', error.http_code);
+            }
           }
         } else {
           imageUrls.push(img);
@@ -44,9 +46,13 @@ export class ReportsService {
     // Handle uploaded files (Multipart)
     if (files && files.length > 0) {
       for (const file of files) {
-        const upload = await this.cloudinaryService.uploadImage(file);
-        if (upload.url) {
-          imageUrls.push(upload.url);
+        try {
+          const upload = await this.cloudinaryService.uploadImage(file);
+          if (upload.url) {
+            imageUrls.push(upload.url);
+          }
+        } catch (error) {
+          console.error('Cloudinary Multer upload failed:', error.message || error);
         }
       }
     }
